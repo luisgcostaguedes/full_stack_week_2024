@@ -4,6 +4,8 @@ import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import BarbershopInfo from "./_components/barbershop-info";
 import ServiceItem from "./_components/service-itens";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 interface BarbershopDatailsPageProps {
   params: {
@@ -14,6 +16,7 @@ interface BarbershopDatailsPageProps {
 const BarbershopDatailsPage = async ({
   params,
 }: BarbershopDatailsPageProps) => {
+  const session = await getServerSession(authOptions);
   if (!params.id) {
     // TODO: redirecionar para a home page
     return null;
@@ -35,7 +38,11 @@ const BarbershopDatailsPage = async ({
       <BarbershopInfo barbershop={barbershop} />
       <div className="px-5 flex flex-col gap-4 py-6">
         {barbershop.services.map((service) => (
-          <ServiceItem key={service.id} service={service} />
+          <ServiceItem
+            key={service.id}
+            service={service}
+            isAuthenticate={!!session?.user}
+          />
         ))}
       </div>
     </div>
